@@ -1,0 +1,4 @@
+vendor/*
+.bundle/*
+config.json
+spreadsheet_config.json
