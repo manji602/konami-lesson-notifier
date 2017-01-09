@@ -26,7 +26,7 @@ module Satone
 
       case symbolized_type
       when :konami_alternate_notifier
-        Satone::Command::KonamiAlternateNotifer.execute()
+        Satone::Command::KonamiAlternateNotifier.execute()
       else
         Satone::Command::SimplePost.execute params: { name: symbolized_type }
       end
