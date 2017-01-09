@@ -7,7 +7,7 @@ module Satone
         @file_name = file_name
       end
 
-      def exist?
+      def file_exists?
         File.exist? file_name
       end
 
