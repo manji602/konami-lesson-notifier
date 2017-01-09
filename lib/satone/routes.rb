@@ -24,10 +24,12 @@ module Satone
     def self.execute_cron_command(type)
       symbolized_type = type.to_sym
 
-#      case symbolized_type
-#      else
+      case symbolized_type
+      when :konami_alternate_notifier
+        Satone::Command::KonamiAlternateNotifer.execute()
+      else
         Satone::Command::SimplePost.execute params: { name: symbolized_type }
-#      end
+      end
     end
   end
 end
