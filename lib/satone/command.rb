@@ -3,8 +3,12 @@ require 'slack-ruby-bot'
 module Satone
   module Command
     class Base < SlackRubyBot::Commands::Base
-      def self.post_message(client, text, channel)
-        client.message text: text, channel: channel
+      def self.usage
+        nil
+      end
+
+      def self.execute(params: {})
+        fail NoImplementedError
       end
     end
   end
