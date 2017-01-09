@@ -23,7 +23,7 @@ stop()
         exit 1
     fi
     echo "$NAME STOP!"
-    kill -INT `cat ${PID}`
+    kill -KILL `cat ${PID}`
     rm $PID
 }
 
