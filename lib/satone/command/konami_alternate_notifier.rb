@@ -32,7 +32,7 @@ module Satone
       # タイムテーブル更新情報のhtmlのうち、以下のキーワードを含むURLを取得する"
       HTML_KEYWORD    = "代行"
       # 以下のレッスンを含む代行情報のみ表示する
-      LESSON_KEYWORDS = %w{ボディパンプ ボディコンバット コアクロス エクストリーム55}
+      LESSON_KEYWORDS = %w{ボディパンプ ボディコンバット コアクロス エクストリーム55 X55}
       
       def self.execute(params: {})
         updates = []
