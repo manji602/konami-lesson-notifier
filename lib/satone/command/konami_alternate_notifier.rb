@@ -24,6 +24,10 @@ module Satone
         { url: "#{INFORMATION_URL_PREFIX}timetable.php?Facility_cd=004070",
           name: "コナミスポーツクラブ 武蔵小杉",
           file_prefix: "musashikosugi"
+        },
+        { url: "#{INFORMATION_URL_PREFIX}timetable.php?Facility_cd=004479",
+          name: "コナミスポーツクラブ 川崎",
+          file_prefix: "kawasaki"
         }
       ]
 
@@ -69,7 +73,7 @@ module Satone
           topic_title = topic_body.css('h1').text
           topic_body  = topic_body.css('p.linkurl').text
 
-          next unless is_target_information? topic_body
+          next unless is_target_information?(topic_title, topic_body)
           
           content = {
             title: topic_title,
@@ -86,10 +90,11 @@ module Satone
         { is_updated: is_updated, updates: updates }
       end
 
-      def self.is_target_information?(topic_body)
+      def self.is_target_information?(topic_title, topic_body)
         is_target_information = false
           
         LESSON_KEYWORDS.each do |lesson|
+          is_target_information = true if topic_title.include? lesson
           is_target_information = true if topic_body.include? lesson
         end        
 
