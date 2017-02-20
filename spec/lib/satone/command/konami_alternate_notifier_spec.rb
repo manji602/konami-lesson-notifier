@@ -74,7 +74,6 @@ RSpec.describe Satone::Command::KonamiAlternateNotifier do
       let(:expected_result) { false }
 
       it_behaves_like "common spec"
-
     end
   end
 end
