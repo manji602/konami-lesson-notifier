@@ -42,4 +42,39 @@ RSpec.describe Satone::Command::KonamiAlternateNotifier do
       it_behaves_like "common spec"
     end
   end
+
+  describe ".is_target_information?" do
+    subject { Satone::Command::KonamiAlternateNotifier.is_target_information? title, body }
+
+    shared_examples_for "common spec" do
+      it "returns expected result" do
+        expect(subject).to be expected_result
+      end
+    end
+    
+    context "title includes LESSON_KEYWORDS" do
+      let(:title) { "X55 hogehoge" }
+      let(:body) { "AA -> BB" }
+      let(:expected_result) { true }
+
+      it_behaves_like "common spec"
+    end
+
+    context "body includes LESSON_KEYWORDS" do
+      let(:title) { "hugahuga" }
+      let(:body) { "ボディパンプ AA -> BB" }
+      let(:expected_result) { true }
+
+      it_behaves_like "common spec"
+    end
+
+    context "neither title nor body includes LESSON_KEYWORDS" do
+      let(:title) { "piyopiyo" }
+      let(:body) { "水泳 AA -> BB" }
+      let(:expected_result) { false }
+
+      it_behaves_like "common spec"
+
+    end
+  end
 end
