@@ -3,7 +3,7 @@ require 'slack-ruby-client'
 module Satone
   class SlackClient
     def self.post_message(client: nil, params: {}, channel: nil)
-      return if channel.nil?
+      return if channel.nil? || params.nil?
       return if params[:text].nil? && params[:attachments].nil?
 
       options = params.merge({ channel: channel, as_user: true })
