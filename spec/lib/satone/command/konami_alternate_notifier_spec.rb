@@ -51,29 +51,40 @@ RSpec.describe Satone::Command::KonamiAlternateNotifier do
         expect(subject).to be expected_result
       end
     end
-    
-    context "title includes LESSON_KEYWORDS" do
-      let(:title) { "X55 hogehoge" }
-      let(:body) { "AA -> BB" }
-      let(:expected_result) { true }
 
-      it_behaves_like "common spec"
-    end
-
-    context "body includes LESSON_KEYWORDS" do
-      let(:title) { "hugahuga" }
-      let(:body) { "ボディパンプ AA -> BB" }
-      let(:expected_result) { true }
-
-      it_behaves_like "common spec"
-    end
-
-    context "neither title nor body includes LESSON_KEYWORDS" do
-      let(:title) { "piyopiyo" }
-      let(:body) { "水泳 AA -> BB" }
+    context "title not includes TITLE_KEYWORDS" do
+      let(:title) { "【2017年1月～3月スタジオ予約参加対象クラス】" }
+      let(:body) { "hogehoge" }
       let(:expected_result) { false }
 
       it_behaves_like "common spec"
+    end
+
+
+    context "title includes TITLE_KEYWORDS" do
+      context "title includes LESSON_KEYWORDS" do
+        let(:title) { "X55 AA -> BB 代行" }
+        let(:body) { "" }
+        let(:expected_result) { true }
+
+        it_behaves_like "common spec"
+      end
+
+      context "body includes LESSON_KEYWORDS" do
+        let(:title) { "hugahuga 代行のご案内" }
+        let(:body) { "ボディパンプ AA -> BB" }
+        let(:expected_result) { true }
+
+        it_behaves_like "common spec"
+      end
+
+      context "neither title nor body includes LESSON_KEYWORDS" do
+        let(:title) { "piyopiyo 代行のご案内" }
+        let(:body) { "水泳 AA -> BB" }
+        let(:expected_result) { false }
+
+        it_behaves_like "common spec"
+      end
     end
   end
 end

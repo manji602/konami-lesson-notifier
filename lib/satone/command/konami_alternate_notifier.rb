@@ -1,31 +1,34 @@
+require 'json'
+
 module Satone
   module Command
     class KonamiAlternateNotifier < Base
-      PRETEXT = "コナミスポーツクラブの代行案内が更新されたよ！"
-      FALLBACK_TEXT = "テキストの展開に失敗しました。"
-      INFORMATION_URL_PREFIX = "http://information.konamisportsclub.jp/newdesign/"
-      CRAWL_TARGETS = [
-        { url: "#{INFORMATION_URL_PREFIX}timetable.php?Facility_cd=007871",
+      PRETEXT             = "コナミスポーツクラブの代行案内が更新されたよ！"
+      FALLBACK_TEXT       = "テキストの展開に失敗しました。"
+      TOPIC_LIST_ENDPOINT = "http://information.konamisportsclub.jp/newdesign/ajax/if_get_topic.php"
+      TOPIC_URL_FORMAT    = "http://information.konamisportsclub.jp/newdesign/storeInformation_TopicView.php?Facility_cd=%s&Topic_kbn=%s&Topic_cd=%s"
+      CRAWL_TARGETS       = [
+        { facility_cd: "007871",
           name: "コナミスポーツクラブ 渋谷",
           file_prefix: "shibuya"
         },
-        { url: "#{INFORMATION_URL_PREFIX}timetable.php?Facility_cd=004446",
+        { facility_cd: "004446",
           name: "コナミスポーツクラブ 目黒青葉台",
           file_prefix: "nakameguro"
         },
-        { url: "#{INFORMATION_URL_PREFIX}timetable.php?Facility_cd=006034",
+        { facility_cd: "006034",
           name: "コナミスポーツクラブ 碑文谷",
           file_prefix: "gakugeidaigaku"
         },
-        { url: "#{INFORMATION_URL_PREFIX}timetable.php?Facility_cd=006029",
+        { facility_cd: "006029",
           name: "コナミスポーツクラブ 自由が丘駅前",
           file_prefix: "jiyuugaoka"
         },
-        { url: "#{INFORMATION_URL_PREFIX}timetable.php?Facility_cd=004070",
+        { facility_cd: "004070",
           name: "コナミスポーツクラブ 武蔵小杉",
           file_prefix: "musashikosugi"
         },
-        { url: "#{INFORMATION_URL_PREFIX}timetable.php?Facility_cd=004479",
+        { facility_cd: "004479",
           name: "コナミスポーツクラブ 川崎",
           file_prefix: "kawasaki"
         }
@@ -34,7 +37,7 @@ module Satone
       # 代行情報のフィルタリング
 
       # タイムテーブル更新情報のhtmlのうち、以下のキーワードを含むURLを取得する"
-      HTML_KEYWORD    = "代行"
+      TITLE_KEYWORD   = "代行"
       # 以下のレッスンを含む代行情報のみ表示する
       LESSON_KEYWORDS = %w{ボディパンプ ボディコンバット コアクロス エクストリーム55 X55}
       
@@ -54,24 +57,16 @@ module Satone
       end
 
       def self.crawl_update_information(crawl_target)
-        url = crawl_target[:url]
-        body = fetch_html url
+        facility_cd = crawl_target[:facility_cd]
+        topics = find_topics_by_facility_cd facility_cd
 
         updates = []
         
-        body.css('div#topics ul li a').each do |topic|
-          next unless topic.text.include? HTML_KEYWORD
-
-          # NOTE:
-          # onclick属性に window.open('URLのsuffix'...)と続くので
-          # シングルクォートでsplitした2番目の要素がURLのsuffixとなる
-          url_suffix = topic['onclick'].split("'").second
-          topic_url  = INFORMATION_URL_PREFIX + url_suffix
-          
+        topics.each do |topic_url|
           topic_body = fetch_html topic_url
 
-          topic_title = topic_body.css('h1').text
-          topic_body  = topic_body.css('p.linkurl').text
+          topic_title = topic_body.css("h1").text
+          topic_body  = topic_body.css("p.linkurl").text
 
           next unless is_target_information?(topic_title, topic_body)
           
@@ -91,6 +86,8 @@ module Satone
       end
 
       def self.is_target_information?(topic_title, topic_body)
+        return false unless topic_title.include? TITLE_KEYWORD
+
         is_target_information = false
           
         LESSON_KEYWORDS.each do |lesson|
@@ -99,6 +96,19 @@ module Satone
         end        
 
         is_target_information
+      end
+
+      def self.find_topics_by_facility_cd(facility_cd)
+        uri = URI TOPIC_LIST_ENDPOINT
+        req = Net::HTTP::Post.new uri.path
+        req.set_form_data({"facility_cd" => facility_cd})
+
+        response = Net::HTTP.start(uri.host, uri.port, use_ssl: false) { |http| http.request req }
+
+        JSON.parse(response.body)["topicList"].map do |topic|
+          format = [topic["FACILITY_CD"], topic["TOPIC_KBN"], topic["TOPIC_CD"]]
+          TOPIC_URL_FORMAT % format
+        end
       end
       
       def self.fetch_html(url)
