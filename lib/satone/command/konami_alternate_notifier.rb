@@ -8,17 +8,9 @@ module Satone
       TOPIC_LIST_ENDPOINT = "http://information.konamisportsclub.jp/newdesign/ajax/if_get_topic.php"
       TOPIC_URL_FORMAT    = "http://information.konamisportsclub.jp/newdesign/storeInformation_TopicView.php?Facility_cd=%s&Topic_kbn=%s&Topic_cd=%s"
       CRAWL_TARGETS       = [
-        { facility_cd: "007871",
-          name: "コナミスポーツクラブ 渋谷",
-          file_prefix: "shibuya"
-        },
         { facility_cd: "004446",
           name: "コナミスポーツクラブ 目黒青葉台",
           file_prefix: "nakameguro"
-        },
-        { facility_cd: "006034",
-          name: "コナミスポーツクラブ 碑文谷",
-          file_prefix: "gakugeidaigaku"
         },
         { facility_cd: "006029",
           name: "コナミスポーツクラブ 自由が丘駅前",
@@ -28,9 +20,9 @@ module Satone
           name: "コナミスポーツクラブ 武蔵小杉",
           file_prefix: "musashikosugi"
         },
-        { facility_cd: "004479",
-          name: "コナミスポーツクラブ 川崎",
-          file_prefix: "kawasaki"
+        { facility_cd: "004461",
+          name: "コナミスポーツクラブ 二子玉川",
+          file_prefix: "futakotamagawa"
         }
       ]
 
