@@ -8,17 +8,9 @@ module Satone
       TOPIC_LIST_ENDPOINT = "http://information.konamisportsclub.jp/newdesign/ajax/if_get_topic.php"
       TOPIC_URL_FORMAT    = "http://information.konamisportsclub.jp/newdesign/storeInformation_TopicView.php?Facility_cd=%s&Topic_kbn=%s&Topic_cd=%s"
       CRAWL_TARGETS       = [
-        { facility_cd: "007871",
-          name: "コナミスポーツクラブ 渋谷",
-          file_prefix: "shibuya"
-        },
         { facility_cd: "004446",
           name: "コナミスポーツクラブ 目黒青葉台",
           file_prefix: "nakameguro"
-        },
-        { facility_cd: "006034",
-          name: "コナミスポーツクラブ 碑文谷",
-          file_prefix: "gakugeidaigaku"
         },
         { facility_cd: "006029",
           name: "コナミスポーツクラブ 自由が丘駅前",
@@ -28,9 +20,9 @@ module Satone
           name: "コナミスポーツクラブ 武蔵小杉",
           file_prefix: "musashikosugi"
         },
-        { facility_cd: "004479",
-          name: "コナミスポーツクラブ 川崎",
-          file_prefix: "kawasaki"
+        { facility_cd: "004461",
+          name: "コナミスポーツクラブ 二子玉川",
+          file_prefix: "futakotamagawa"
         }
       ]
 
@@ -40,7 +32,7 @@ module Satone
       TITLE_KEYWORD   = "代行"
       # 以下のレッスンを含む代行情報のみ表示する
       LESSON_KEYWORDS = %w{ボディパンプ ボディコンバット コアクロス エクストリーム55 X55}
-      
+
       def self.execute(params: {})
         updates = []
 
@@ -61,7 +53,7 @@ module Satone
         topics = find_topics_by_facility_cd facility_cd
 
         updates = []
-        
+
         topics.each do |topic_url|
           topic_body = fetch_html topic_url
 
@@ -69,7 +61,7 @@ module Satone
           topic_body  = topic_body.css("p.linkurl").text
 
           next unless is_target_information?(topic_title, topic_body)
-          
+
           content = {
             title: topic_title,
             body: topic_body,
@@ -81,7 +73,7 @@ module Satone
         end
 
         is_updated = updated?(prefix: crawl_target[:file_prefix], latest_updates: updates)
-        
+
         { is_updated: is_updated, updates: updates }
       end
 
@@ -89,11 +81,11 @@ module Satone
         return false unless topic_title.include? TITLE_KEYWORD
 
         is_target_information = false
-          
+
         LESSON_KEYWORDS.each do |lesson|
           is_target_information = true if topic_title.include? lesson
           is_target_information = true if topic_body.include? lesson
-        end        
+        end
 
         is_target_information
       end
@@ -110,18 +102,18 @@ module Satone
           TOPIC_URL_FORMAT % format
         end
       end
-      
+
       def self.fetch_html(url)
         uri = URI url
         req = Net::HTTP::Get.new "#{uri.path}?#{uri.query}"
         response = Net::HTTP.start(uri.host, uri.port, use_ssl: false) { |http| http.request req }
-        
+
         Nokogiri::HTML.parse(response.body, nil, "UTF-8")
       end
 
       def self.save_updates(prefix: nil, updates: [])
         return if prefix.nil? || updates.empty?
-        
+
         file = file_name prefix
         file_manager = Satone::Helper::FileManager.new file
 
@@ -138,7 +130,7 @@ module Satone
 
         JSON.parse(file_manager.fetch_all.first, symbolize_names: true)
       end
-      
+
       def self.updated?(prefix: nil, latest_updates: [])
         previous_updates = fetch_previous_updates prefix
 
@@ -151,11 +143,11 @@ module Satone
 
         false
       end
-      
+
       def self.file_name(file_prefix)
         "konami/updates_#{file_prefix}.txt"
       end
-      
+
       def self.build_attachments(updates)
         return if updates.empty?
 
