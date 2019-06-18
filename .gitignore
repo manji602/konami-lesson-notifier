@@ -1,5 +1,0 @@
-vendor/*
-.bundle/*
-satone-secrets.json
-spreadsheet_config.json
-satone-bot-daemon.pid
