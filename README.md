@@ -3,7 +3,7 @@ konami-lesson-notifier
 
 ## Description
 
-コナミの代行情報を通知するためのbot
+コナミスポーツクラブの代行情報を通知するためのbot
 
 ## Before to use
 
@@ -20,6 +20,8 @@ A列に店舗名、B列に `facility_cd`、C列は空欄にしておきます。
 その後「ツール -> スクリプトエディタ」からgasのエディタを起動し [main.js](https://github.com/manji602/konami-lesson-notifier/blob/master/main.js) をコピーしてください。
 
 `main` メソッドを実行するとSlackに投稿されます。定期実行したい場合は「編集 -> 現在のプロジェクトのトリガー」から設定します。
+
+![image](https://user-images.githubusercontent.com/531477/59808237-65fb5d00-9336-11e9-930e-14274b207f44.png)
 
 ## License
 
